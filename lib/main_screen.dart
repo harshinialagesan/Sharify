@@ -65,7 +65,7 @@ class _MainScreenState extends State<MainScreen> {
         onPageChanged: onPageChanged,
         children: [
           HomeScreen(),
-          AddPostPage(),
+          AddPostScreen(),
           SearchScreen(),
         ],
       ),
