@@ -8,8 +8,7 @@ class MyLikeScreen extends StatefulWidget {
 }
 
 class _MyLikeScreenState extends State<MyLikeScreen> {
-  final Set<int> _selectedPosts = {}; // Store selected post IDs
-
+  final Set<int> _selectedPosts = {};
   @override
   void initState() {
     super.initState();
@@ -114,20 +113,19 @@ class _MyLikeScreenState extends State<MyLikeScreen> {
       ),
     );
   }
-
-  void _unlikeSelectedPosts(BuildContext context) {
+void _unlikeSelectedPosts(BuildContext context) async {
   final postProvider = Provider.of<PostProvider>(context, listen: false);
 
   for (int postId in _selectedPosts) {
-    postProvider.toggleLike(postId); // Unlike the post
+    await postProvider.toggleLike(postId); 
   }
 
-  setState(() {
-    _selectedPosts.clear();
-  });
+  _selectedPosts.clear(); 
+  await postProvider.fetchLikedPosts();
 
-  // Refresh liked posts list
-  postProvider.fetchLikedPosts();
+  if (mounted) {
+    setState(() {});
+  } 
 }
 
 }

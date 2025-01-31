@@ -118,7 +118,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 AnimatedLikeButton(postId: post.id), 
 
 
-                                Text('${post.likes} Likes'), // Display likes count
+                                Text('${post.likes} Likes'),
 
 
                               IconButton(
@@ -160,7 +160,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     );
                                   },
                                 ),
-                                Text('${post.comments} Comments '), // Display likes count
+                                Text('${post.comments} Comments '), 
                               SizedBox(width: 10,),
                               const Icon(Icons.send),
                             ],

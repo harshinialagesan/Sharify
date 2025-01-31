@@ -82,7 +82,9 @@ Future<void> toggleLike(int postId) async {
         // Add or remove the postId based on the like/unlike action
         if (isLiked) {
           if (!likedPosts.contains(postId.toString())) {
-            likedPosts.add(postId.toString());  // Add the post ID to the list
+            likedPosts.add(postId.toString()); 
+             _likedPosts.removeWhere((post) => post.id == postId); // Remove from UI
+ // Add the post ID to the list
             debugPrint("Post $postId liked, added to saved list.");
           }
         } else {
