@@ -6,14 +6,11 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
 
-
-
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
 
 
   @override
-  // ignore: library_private_types_in_public_api
   _SignUpScreenState createState() => _SignUpScreenState();
 }
 
@@ -53,12 +50,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
         final responseData = json.decode(response.body);
 
         if (responseData['status']['code'] == "1000") {
-          // Show success message and navigate to login screen
            SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString('username', userName);
           _showSuccessDialog(responseData['data']);
         } else {
-          // Show error message
           _showErrorDialog(responseData['data'] ?? "Registration failed.");
         }
       } else {
@@ -73,7 +68,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
     }
   }
 
-  // Show success dialog with the message
   void _showSuccessDialog(String message) {
     showDialog(
       context: context,
@@ -83,7 +77,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         actions: [
           TextButton(
             onPressed: () {
-              Navigator.of(ctx).pop(); // Close the dialog
+              Navigator.of(ctx).pop(); 
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(builder: (context) => LoginScreen()),

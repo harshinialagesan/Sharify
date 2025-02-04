@@ -23,7 +23,7 @@ class _MainScreenState extends State<MainScreen> {
   void initState() {
     pageController = PageController();
     super.initState();
-    ///
+    
   }
 
   @override
@@ -51,10 +51,6 @@ class _MainScreenState extends State<MainScreen> {
           BottomNavigationBarItem(icon: Icon(Icons.home,color:Colors.white),label: ""),
           BottomNavigationBarItem(icon: Icon(Icons.add_circle,color:Colors.white),label: ""),
           BottomNavigationBarItem(icon: Icon(Icons.search,color:Colors.white),label: ""),
-
-
-          
-        
 
         ],
         onTap: navigationTapped,

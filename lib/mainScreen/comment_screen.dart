@@ -86,11 +86,11 @@ class _CommentScreenState extends State<CommentScreen> {
                     child: Center(child: CircularProgressIndicator()),
                   );
                 } else {
-                  return Container(); // Hide loader if not loading
+                  return Container(); 
                 }
               },
             ),
-),
+          ),
 
 
                     const Divider(),

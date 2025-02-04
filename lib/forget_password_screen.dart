@@ -4,7 +4,6 @@ import 'package:my_app/login_screen.dart';
 import 'package:my_app/otp_screen.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:my_app/otp_text_field.dart';
 
 class ForgetPasswordScreen extends StatefulWidget {
   
@@ -41,7 +40,6 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
      if (response.statusCode == 200) {
     final responseData = json.decode(response.body);
 
-    // Handle success response (status code 200 and 'status' is 'success')
     if (responseData['status']['code'] == "1000") {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(responseData['data'] ?? "OTP Sent Successfully"),
@@ -55,14 +53,12 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
         ),
       );
     } else {
-      // Handle other success responses (non-"1000" code)
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(responseData['status']['description'] ?? "Unexpected error occurred"),
         backgroundColor: Colors.red,
       ));
     }
   } else {
-    // Handle unexpected response status codes (e.g., not 200)
     final errorData = json.decode(response.body);
 
     if (errorData['status'] == 'error') {
@@ -240,7 +236,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                               ),
                             ],
                           ),
-                        ),                          
+                        ), 
                                               
                     ],
           

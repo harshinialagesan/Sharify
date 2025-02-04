@@ -3,12 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:my_app/models/auth_service_class.dart';
 import 'package:my_app/models/post_class.dart';
+import 'package:my_app/models/share_post_class.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 
 
 class PostProvider with ChangeNotifier {
   List<Post> _posts = [];
+  List<SharedPost> _sharedPosts = []; 
+
+
   bool _isLoading = false;
   bool _hasMorePosts = true;
   int _page = 0;
@@ -18,7 +22,7 @@ class PostProvider with ChangeNotifier {
 
 
   List<int> _likedPostIds = [];
-
+  List<SharedPost> get sharedPosts => _sharedPosts;
   List<Post> get posts => _posts;
   bool get isLoading => _isLoading;
   bool get hasMorePosts => _hasMorePosts; 
@@ -58,7 +62,7 @@ class PostProvider with ChangeNotifier {
 
     _isLoading = false;
     notifyListeners();
-  }
+  } 
 Future<void> toggleLike(int postId) async {
   final userId = await _authService.getUserId();
   final url = 'http://172.20.1.191:8080/likes/post/$postId?userId=$userId';
@@ -84,7 +88,7 @@ Future<void> toggleLike(int postId) async {
           if (!likedPosts.contains(postId.toString())) {
             likedPosts.add(postId.toString()); 
              _likedPosts.removeWhere((post) => post.id == postId); // Remove from UI
- // Add the post ID to the list
+         // Add the post ID to the list
             debugPrint("Post $postId liked, added to saved list.");
           }
         } else {
@@ -119,9 +123,10 @@ Future<void> toggleLike(int postId) async {
   }
 }
 
-// Check if a post is liked
 bool isPostLiked(int postId) {
   return _likedPostStatus[postId] ?? false;
+    // return _likedPosts.any((post) => post.id == postId);
+
 }
 
   Future<void>  fetchUserPosts() async {
@@ -228,20 +233,28 @@ Future<void> loadLikedPosts() async {
   List<Post> get likedPosts => _likedPosts;
 
 Future<void> fetchLikedPosts() async {
-    final userId = await _authService.getUserId(); 
+  final userId = await _authService.getUserId();
 
-    final response = await http.get(
-      Uri.parse('http://172.20.1.191:8080/likes/user/$userId'),
-    );
+  final response = await http.get(
+    Uri.parse('http://172.20.1.191:8080/likes/user/$userId'),
+  );
 
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body)['data']['posts'];
-      _likedPosts = (data as List).map((postJson) => Post.fromJson(postJson)).toList();
-      notifyListeners();  
+  if (response.statusCode == 200) {
+    final data = jsonDecode(response.body)['data']['posts'];
+
+    if (data == null || (data as List).isEmpty) {
+      _likedPosts = [];
     } else {
-      throw Exception('Failed to load liked posts');
+      _likedPosts = data.map((postJson) => Post.fromJson(postJson)).toList();
     }
+    
+    notifyListeners();
+  } else {
+    print('Failed to load liked posts: ${response.statusCode}');
   }
+}
+  
+
 
 Future<void> deletePost(int postId, BuildContext context) async {
   try {
@@ -293,6 +306,88 @@ Future<void> deletePost(int postId, BuildContext context) async {
     );
   }
 }
+
+
+Future<void> sharePost(int postId, String comment) async {
+      final userId = await _authService.getUserId();
+
+    final url = Uri.parse('http://172.20.1.191:8080/share');
+
+    final payload = jsonEncode({
+      'userId': userId,
+      'postId': postId,
+      'comment': comment,
+    });
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: payload,
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+        final originalPost = responseData['data']['originalPost'];
+        final sharedBy = responseData['data']['sharedBy'];
+        final comment = responseData['data']['comment'];
+
+        final SharedPost sharedPost = SharedPost(
+          originalPostId: originalPost['id'],
+          originalPostUserName: originalPost['userName'],
+          originalPostTitle: originalPost['title'],
+          originalPostDescription: originalPost['description'],
+          originalPostImage: originalPost['images'][0], 
+          username: sharedBy['username'],
+          comment: comment,
+        );
+
+        sharedPosts.add(sharedPost);
+        notifyListeners();  
+        print("Post shared successfully");
+      } else {
+        throw Exception('Failed to share post');
+      }
+    } catch (error) {
+      print('Error sharing post: $error');
+      
+    }
+  }
+
+  Future<void> fetchSharedPosts() async {
+    final userId = await _authService.getUserId();
+
+    final url = 'http://172.20.1.191:8080/share/user/$userId';  
+
+    try {
+      final response = await http.get(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+        final List<dynamic> posts = responseData['data']['content'];
+
+        _sharedPosts = posts.map((postData) {
+          return SharedPost(
+            originalPostId: postData['originalPost']['id'],
+            originalPostTitle: postData['originalPost']['title'],
+            originalPostDescription: postData['originalPost']['description'],
+            originalPostImage: postData['originalPost']['images'][0],
+            originalPostUserName: postData['originalPost']['userName'],
+            username: postData['sharedBy']['username'],
+            comment: postData['comment'],
+          );
+        }).toList();
+
+        notifyListeners();  
+      } else {
+        throw Exception('Failed to load shared posts');
+      }
+    } catch (error) {
+      print('Error fetching shared posts: $error');
+      throw error;
+    }
+  }
+
 
 }
 

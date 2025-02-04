@@ -1,123 +1,3 @@
-// import 'package:flutter/material.dart';
-// import 'package:flutter/services.dart';
-// import 'package:my_app/constants.dart';
-
-
-// class OtpScreen extends StatelessWidget {
-//   final String email;
-//   const OtpScreen({super.key,required this.email});
-
-//  @override
-//   Widget build(BuildContext context) {
-//     double height = MediaQuery.of(context).size.height;
-//     double width = MediaQuery.of(context).size.width;
-
-//     return Scaffold(
-//       body: Container(
-//         width: width,
-//         height: height,
-//         decoration: const BoxDecoration(
-//           gradient: LinearGradient(
-//             colors: [Color(0xFFB3E5FC), Color(0xFF0288D1)],
-//             begin: Alignment.topCenter,
-//             end: Alignment.bottomCenter,
-//           ),
-//         ),
-//         child: Column(
-//           children: [
-//             // Back Button
-//             Padding(
-//               padding: const EdgeInsets.only(top: 40.0, left: 10.0),
-//               child: Align(
-//                 alignment: Alignment.topLeft,
-//                 child: IconButton(
-//                   icon: const Icon(
-//                     Icons.arrow_back,
-//                     color: Colors.black,
-//                     size: 30,
-//                   ),
-//                   onPressed: () {
-//                     Navigator.pop(context);
-//                   },
-//                 ),
-//               ),
-//             ),
-//             const Spacer(),
-//             // OTP Title
-//             const Text(
-//               "OTP Verification",
-//               style: TextStyle(
-//                 fontSize: 24,
-//                 fontWeight: FontWeight.bold,
-//                 color: Colors.black,
-//               ),
-//             ),
-//             const SizedBox(height: 8),
-//             const Text(
-//               "Enter the OTP sent to your registered email",
-//               style: TextStyle(
-//                 fontSize: 16,
-//                 color: Colors.black54,
-//               ),
-//               textAlign: TextAlign.center,
-//             ),
-//             const SizedBox(height: 30),
-//             // OTP Input Fields
-//             const OtpTextField(),
-//             const SizedBox(height: 30),
-//             // Verify Button
-//             SizedBox(
-//               width: width * 0.8,
-//               height: 50,
-//               child: ElevatedButton(
-//                 onPressed: () {
-//                   // Action for Verify OTP
-//                 },
-//                 style: ElevatedButton.styleFrom(
-//                   backgroundColor: const Color.fromARGB(255, 8, 120, 225),
-//                   shape: RoundedRectangleBorder(
-//                     borderRadius: BorderRadius.circular(10),
-//                   ),
-//                 ),
-//                 child: const Text(
-//                   "Verify OTP",
-//                   style: TextStyle(fontSize: 16, color: Colors.white),
-//                 ),
-//               ),
-//             ),
-//             const SizedBox(height: 15),
-//             Row(
-//               mainAxisAlignment: MainAxisAlignment.center,
-//               children: [
-//                 const Text(
-//                   "Didn't receive the OTP? ",
-//                   style: TextStyle(color: Colors.black54,fontSize: 18,),
-                  
-//                 ),
-//                 GestureDetector(
-//                   onTap: () {
-//                     // Action for Resend OTP
-//                   },
-//                   child: const Text(
-//                     "Resend OTP",
-//                     style: TextStyle(
-//                       color: Color.fromARGB(255, 8, 120, 225),
-//                       fontWeight: FontWeight.bold,
-//                       fontSize: 18,
-
-//                     ),
-//                   ),
-//                 ),
-//               ],
-//             ),
-//             const Spacer(),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:async';
@@ -136,13 +16,11 @@ class OtpScreen extends StatefulWidget {
 
 class _OtpScreenState extends State<OtpScreen> {
   final List<TextEditingController> _otpControllers =
-      List.generate(6, (index) => TextEditingController());
+  List.generate(6, (index) => TextEditingController());
   bool _isResendEnabled = false;
-  int _timerSeconds = 60; // Timer duration in seconds
+  int _timerSeconds = 60; 
   Timer? _timer;
   bool _isLoading = false;
-
-  // Flag to track if OTP expiry occurred
   bool _isOtpExpired = false;
 
   @override
@@ -163,7 +41,7 @@ class _OtpScreenState extends State<OtpScreen> {
   void _startTimer() {
     setState(() {
       _isResendEnabled = false;
-      _isOtpExpired = false;  // Reset OTP expiry flag
+      _isOtpExpired = false;  
       _timerSeconds = 60;
     });
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
@@ -172,7 +50,7 @@ class _OtpScreenState extends State<OtpScreen> {
           _timerSeconds--;
         } else {
           _isResendEnabled = true;
-          _isOtpExpired = true; // Set OTP expired flag
+          _isOtpExpired = true; 
           timer.cancel();
         }
       });
@@ -191,7 +69,6 @@ class _OtpScreenState extends State<OtpScreen> {
       return;
     }
 
-    // Check if OTP expired
     if (_isOtpExpired) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -227,7 +104,6 @@ class _OtpScreenState extends State<OtpScreen> {
           ),
         );
 
-        // Navigate to Reset Password Screen
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -265,7 +141,6 @@ class _OtpScreenState extends State<OtpScreen> {
   Future<void> _resendOtp() async {
     if (!_isResendEnabled) return;
 
-    // Clear the OTP fields when Resend OTP is clicked
     for (var controller in _otpControllers) {
       controller.clear();
     }
@@ -292,7 +167,7 @@ class _OtpScreenState extends State<OtpScreen> {
             backgroundColor: Colors.green,
           ),
         );
-        _startTimer(); // Restart the timer
+        _startTimer(); 
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -314,7 +189,6 @@ class _OtpScreenState extends State<OtpScreen> {
     }
   }
 
-  // Handle backspace by shifting focus to previous text field
   void _onOtpFieldChanged(String value, int index) {
     if (value.isEmpty && index > 0) {
       FocusScope.of(context).previousFocus();
@@ -374,7 +248,7 @@ class _OtpScreenState extends State<OtpScreen> {
                     onChanged: (value) {
                       _onOtpFieldChanged(value, index);
                     },
-                    keyboardType: TextInputType.number, // Numeric keyboard
+                    keyboardType: TextInputType.number, 
                     textAlign: TextAlign.center,
                     inputFormatters: [
                       LengthLimitingTextInputFormatter(1),

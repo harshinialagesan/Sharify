@@ -64,7 +64,6 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
             ),
           );
 
-          // Navigate to Login Screen
           Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(builder: (context) => const LoginScreen()),
@@ -112,7 +111,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
         height: double.infinity,
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('assets/password_screen.jpg'), // Add your image path here
+            image: AssetImage('assets/password_screen.jpg'), 
             fit: BoxFit.cover,
             alignment: Alignment.center,
           ),

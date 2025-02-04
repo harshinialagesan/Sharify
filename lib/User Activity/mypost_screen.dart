@@ -9,6 +9,9 @@ class MyPostScreen extends StatefulWidget {
 }
 
 class _MyPostScreenState extends State<MyPostScreen> {
+  bool _showButtons = false;
+
+
   @override
   void initState() {
     super.initState();
@@ -63,15 +66,35 @@ class _MyPostScreenState extends State<MyPostScreen> {
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
                                   IconButton(
-                                    icon: Icon(Icons.edit, color: Colors.blue),
-                                    onPressed: () =>
-                                        _showEditPostDialog(context, post),
+                                      icon: Icon(
+                                      _showButtons ? Icons.toggle_on : Icons.toggle_off,
+                                      size: 60, 
+                                      color: Colors.purple, 
+                                    ),                                    
+                                    onPressed: () {
+                                      setState(() {
+                                        _showButtons = !_showButtons;
+                                      });
+                                    },
                                   ),
-                                  IconButton(
-                                    icon: Icon(Icons.delete, color: Colors.red),
-                                    onPressed: () =>
-                                        _showDeleteConfirmationDialog(context, post),
+                                  if(_showButtons) ...[
+                                  Tooltip(
+                                    message: "Edit Post",
+                                    child: IconButton(
+                                      icon: Icon(Icons.edit, color: Colors.blue),
+                                      onPressed: () =>
+                                          _showEditPostDialog(context, post),
+                                    ),
                                   ),
+                                  Tooltip(
+                                    message: "Delete Post",
+                                    child: IconButton(
+                                      icon: Icon(Icons.delete, color: Colors.red),
+                                      onPressed: () =>
+                                          _showDeleteConfirmationDialog(context, post),
+                                    ),
+                                  ),
+                                ],
                                 ],
                               ),
                             ],

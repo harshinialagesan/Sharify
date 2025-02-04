@@ -8,7 +8,7 @@ class AuthService {
 
   Future<int> getUserId() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getInt('user_id') ?? -1;  // Return -1 if no user is logged in
+    return prefs.getInt('user_id') ?? -1;  
   }
 
   Future<void> logout() async {

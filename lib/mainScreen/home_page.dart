@@ -1,9 +1,10 @@
   import 'package:flutter/material.dart';
-  import 'package:my_app/mainScreen/comment_page.dart';
+  import 'package:my_app/User%20Activity/myaccount_screen.dart';
   import 'package:my_app/mainScreen/comment_screen.dart';
-  import 'package:my_app/mainScreen/log_out_page.dart';
-import 'package:my_app/mainScreen/mylike_screen.dart';
-  import 'package:my_app/mainScreen/mypost_screen.dart';
+  import 'package:my_app/User%20Activity/log_out_page.dart';
+  import 'package:my_app/User%20Activity/mylike_screen.dart';
+  import 'package:my_app/User%20Activity/mypost_screen.dart';
+  import 'package:my_app/mainScreen/share_screen.dart';
   import 'package:my_app/providers/post_providers.dart';
   import 'package:provider/provider.dart';
 
@@ -21,7 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final postProvider = Provider.of<PostProvider>(context, listen: false);
          postProvider.loadLikedPosts();  // Load liked posts first
-         postProvider.fetchPosts(); 
+         postProvider.fetchPosts();       
     });
   }
 
@@ -116,8 +117,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               children: [
                                 SizedBox(width: 10,),
                                 AnimatedLikeButton(postId: post.id), 
-
-
+                                
+                                SizedBox(width: 10,),
                                 Text('${post.likes} Likes'),
 
 
@@ -162,7 +163,51 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                                 Text('${post.comments} Comments '), 
                               SizedBox(width: 10,),
-                              const Icon(Icons.send),
+                            IconButton(
+                              icon: const Icon(Icons.send),
+                              onPressed: () async {
+                                final commentController = TextEditingController();
+
+                                showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return AlertDialog(
+                                      title: const Text("Add a Comment"),
+                                      content: TextField(
+                                        controller: commentController,
+                                        decoration: const InputDecoration(hintText: "Enter your comment"),
+                                      ),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                            final comment = commentController.text;
+                                            if (comment.isNotEmpty) {
+                                              postProvider.sharePost(post.id, comment).then((_) {
+                                                ScaffoldMessenger.of(context).showSnackBar(
+                                                  SnackBar(content: Text("Post shared successfully")),
+                                                );
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(builder: (context) => MySharesScreen()),
+                                                );
+                                              }).catchError((error) {
+                                                ScaffoldMessenger.of(context).showSnackBar(
+                                                  SnackBar(content: Text("Failed to share post")),
+                                                );
+                                              });
+                                            }
+                                          },
+                                          child: const Text("Share"),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                              },
+                            ),
+
+                            Text('${post.share} Shares'),
                             ],
                           );
                             }
@@ -179,7 +224,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       drawer: Drawer(
         child: ListView(
-          padding: EdgeInsets.zero,
+          padding: EdgeInsets.only(top: 30,bottom: 10),
           children: <Widget>[
              ListTile(
                 title: const Text(
@@ -193,7 +238,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
            
             ListTile(
-              leading: const Icon(Icons.post_add),
+              leading: const Icon(Icons.post_add,color: Colors.purple,),
               title: const Text("My Posts"),
               onTap: () {
                 Navigator.push(
@@ -209,6 +254,26 @@ class _HomeScreenState extends State<HomeScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) =>  MyLikeScreen()),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.share,color: Colors.teal,),
+              title: const Text("My Shares"),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) =>  MySharesScreen()),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.account_box,color: Colors.blueGrey,),
+              title: const Text("My Account"),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) =>  AccountScreen()),
                 );
               },
             ),

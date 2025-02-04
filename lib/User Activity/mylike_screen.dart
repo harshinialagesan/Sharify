@@ -88,7 +88,7 @@ class _MyLikeScreenState extends State<MyLikeScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Icon(Icons.favorite, color: Colors.red), // Like icon
+                          Icon(Icons.favorite, color: Colors.red),
                           Checkbox(
                             value: isSelected,
                             onChanged: (bool? selected) {

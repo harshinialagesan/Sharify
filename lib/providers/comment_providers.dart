@@ -23,7 +23,7 @@ class Comment {
 class CommentProvider with ChangeNotifier {
   List<Comment> _comments = [];
   bool _isLoading = false;
-  bool _hasMore = true; // To track if more pages are available
+  bool _hasMore = true; 
   int _currentPage = 0;
   final int _pageSize = 10;
   final AuthService _authService = AuthService();
@@ -33,12 +33,11 @@ class CommentProvider with ChangeNotifier {
   bool get hasMore => _hasMore;
 
   Future<void> fetchComments(int postId, {bool loadMore = false}) async {
-  if (_isLoading) return; // Prevent multiple simultaneous fetches
+  if (_isLoading) return; 
 
   _isLoading = true;
   notifyListeners();
 
-  // If it's not a load more request, reset current page and comments list
   if (!loadMore) {
     _currentPage = 0;
     _comments.clear();
@@ -55,9 +54,9 @@ class CommentProvider with ChangeNotifier {
       final List<dynamic> newComments = data['comments'];
 
       if (newComments.isEmpty) {
-        _hasMore = false; // No more data to load
+        _hasMore = false; 
       } else {
-        _currentPage++; // Increment the page count
+        _currentPage++; 
         _comments.addAll(newComments.map((c) => Comment.fromJson(c)).toList());
       }
     } else {
@@ -66,8 +65,8 @@ class CommentProvider with ChangeNotifier {
   } catch (error) {
     debugPrint("Error fetching comments: $error");
   } finally {
-    _isLoading = false; // Ensure loading state is updated
-    notifyListeners();  // Notify UI of state change
+    _isLoading = false; 
+    notifyListeners();  
   }
 }
 
